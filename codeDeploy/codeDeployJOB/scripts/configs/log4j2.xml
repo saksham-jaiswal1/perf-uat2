@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+	<Appenders>
+		<RollingFile name="RollingFileAppender"
+			fileName="logs/app.log"
+			filePattern="logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz">
+			<PatternLayout>
+			<Pattern>%d [%t] [%p] %c | uuid: %X{request_uuid} | %replace{%replace{%replace{%replace{%replace{%replace{%replace{%m}{password=[^,]*}{password=******}}{wsPassword=[^,]*}{wsPassword=******}}{bindPass=[^,]*}{bindPass=******}}{unicodePwd=[^,]*}{unicodePwd=******}}{wsPwd=[^,]*}{wsPwd=******}}{generatedPassword=[^,]*}{generatedPassword=******}}{loginPassword=[^,]*}{loginPassword=******}%n"</Pattern>
+			</PatternLayout>
+			<Policies>
+				<OnStartupTriggeringPolicy />
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="50 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20" />
+		</RollingFile>
+		<RollingFile name="JsonRollingFileAppender"
+			fileName="logs/json/jsonapp.json"
+			filePattern="logs/json/$${date:yyyy-MM-dd}/app-%d{MM-dd-yyyy}-%i.jsonlog.gz">
+			<JsonLayout complete="false" compact="false">
+				<KeyValuePair key="myCustomField" value="myCustomValue" />
+			</JsonLayout>
+			<Policies>
+				<OnStartupTriggeringPolicy />
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="50 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20" />
+		</RollingFile>
+		<RollingFile name="SQLRollingFileAppender"
+			fileName="logs/sql.log"
+			filePattern="logs/$${date:yyyy-MM}/sql-%d{MM-dd-yyyy}-%i.log.gz">
+			<PatternLayout>
+				<Pattern>%d [%t] [%p] %c | uuid: %X{request_uuid} | %replace{%replace{%m}{password=[^,]*}{password=******}}{bindPass=[^,]*}{bindPass=******}%n"</Pattern>
+			</PatternLayout>
+			<Policies>
+				<OnStartupTriggeringPolicy />
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="50 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="50" />
+		</RollingFile>
+		<!-- <JDBC name="JDBCAppender" tableName="APP_LOGS"> <DataSource jndiName="java:/DefaultDS" 
+			/> <Column name="LOG_ID" pattern="%u" /> <Column name="ENTRY_DATE" isEventTimestamp="true" 
+			/> <Column name="LOGGER" pattern="%logger" /> <Column name="LOG_LEVEL" pattern="%level" 
+			/> <Column name="MESSAGE" pattern="%m" /> <Column name="EXCEPTION" pattern="%throwable 
+			" />> </JDBC> -->
+		<Console name="Console" target="SYSTEM_OUT">
+			<!--  <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />-->
+			<PatternLayout>
+				<Pattern>%d [%t] [%p] %c{1.}  | tenant:%X{tenantName} | uuid: %X{request_uuid} | %replace{%replace{%replace{%replace{%replace{%replace{%replace{%m}{password=[^,]*}{password=******}}{wsPassword=[^,]*}{wsPassword=******}}{bindPass=[^,]*}{bindPass=******}}{unicodePwd=[^,]*}{unicodePwd=******}}{wsPwd=[^,]*}{wsPwd=******}}{generatedPassword=[^,]*}{generatedPassword=******}}{loginPassword=[^,]*}{loginPassword=******}%n"</Pattern>
+			</PatternLayout>
+		</Console>
+	</Appenders>
+
+	<Loggers>
+		<Logger name="org.hibernate.SQL" level="INFO"
+			additivity="false">
+			<AppenderRef ref="SQLRollingFileAppender" level="INFO" />
+		</Logger>
+		<Logger name="org.hibernate.type" level="INFO"
+			additivity="false">
+			<AppenderRef ref="SQLRollingFileAppender" level="INFO" />
+		</Logger>
+		<Logger name="com.zaxxer.hikari" level="INFO"
+			additivity="false">
+			<AppenderRef ref="RollingFileAppender" level="INFO" />
+			<!-- <AppenderRef ref="Console"/> -->
+		</Logger>
+		<Logger name="org.hibernate.persister.entity" level="ERROR"
+			additivity="false">
+			<AppenderRef ref="RollingFileAppender" level="ERROR" />
+		</Logger>
+		<Logger name="org.hibernate.collection.internal" level="ERROR"
+			additivity="false">
+			<AppenderRef ref="RollingFileAppender" level="ERROR" />
+		</Logger>
+		<Logger name="org.quartz" level="INFO" additivity="false">
+			<AppenderRef ref="RollingFileAppender" level="INFO" />
+		</Logger>
+		<Logger name="com.alnt.platform.application.security.secret"
+				level="WARN" additivity="false">
+			<AppenderRef ref="RollingFileAppender" />
+		</Logger>
+		<Logger name="com.alnt" level="DEBUG" additivity="false">
+			<AppenderRef ref="RollingFileAppender" level="DEBUG" />
+			<!-- <AppenderRef ref="Console"/> -->
+		</Logger>
+		<Logger name="org.springframework" level="INFO" additivity="false">
+			<AppenderRef ref="RollingFileAppender" level="INFO" />
+		</Logger>
+		<Root level="INFO" additivity="false">
+			<AppenderRef ref="RollingFileAppender" level="INFO" />
+			<!-- <AppenderRef ref="JsonRollingFileAppender" level="error" /> -->
+			<!-- <AppenderRef ref="Console"/> -->
+		</Root>
+	</Loggers>
+</Configuration>

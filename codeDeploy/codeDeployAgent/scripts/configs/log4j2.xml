@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+	<Appenders>
+		<RollingFile name="DefaultTenantRollingFileAppender"
+			fileName="logs/app.log"
+			filePattern="logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz">
+			<PatternLayout>
+			<Pattern>%d [%t] [%p] %c | tenant:%X{tenantName} | uuid: %X{request_uuid} | %replace{%replace{%replace{%replace{%replace{%replace{%replace{%m}{password=[^,]*}{password=******}}{wsPassword=[^,]*}{wsPassword=******}}{bindPass=[^,]*}{bindPass=******}}{unicodePwd=[^,]*}{unicodePwd=******}}{wsPwd=[^,]*}{wsPwd=******}}{generatedPassword=[^,]*}{generatedPassword=******}}{loginPassword=[^,]*}{loginPassword=******}%n"</Pattern>
+			</PatternLayout>
+			<Policies>
+				<OnStartupTriggeringPolicy />
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="50 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20" />
+		</RollingFile>
+		<RollingFile name="Tenant2RollingFileAppender"
+			fileName="logs/test-tenant-app.log"
+			filePattern="logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz">
+			<PatternLayout>
+			<Pattern>%d [%t] [%p] %c | tenant:%X{tenantName} | uuid: %X{request_uuid} | %replace{%replace{%replace{%replace{%replace{%replace{%replace{%m}{password=[^,]*}{password=******}}{wsPassword=[^,]*}{wsPassword=******}}{bindPass=[^,]*}{bindPass=******}}{unicodePwd=[^,]*}{unicodePwd=******}}{wsPwd=[^,]*}{wsPwd=******}}{generatedPassword=[^,]*}{generatedPassword=******}}{loginPassword=[^,]*}{loginPassword=******}%n"</Pattern>
+			</PatternLayout>
+			<Policies>
+				<OnStartupTriggeringPolicy />
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="50 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20" />
+		</RollingFile>
+		<RollingFile name="AppSecRollingFileAppender"
+			fileName="logs/appsec/appsec.log"
+			filePattern="logs/appsec/$${date:yyyy-MM}/appsec-%d{MM-dd-yyyy}-%i.log.gz">
+			<PatternLayout>
+			<Pattern>%d [%p] | %X{request_ip} | tenant: %X{tenant} | actor: %X{actor} | %m %n"</Pattern>
+			</PatternLayout>
+			<Policies>
+				<OnStartupTriggeringPolicy />
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="50 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20" />
+		</RollingFile>
+		<RollingFile name="JsonRollingFileAppender"
+			fileName="logs/json/jsonapp.json"
+			filePattern="logs/json/$${date:yyyy-MM-dd}/app-%d{MM-dd-yyyy}-%i.jsonlog.gz">
+			<JsonLayout complete="false" compact="false">
+				<KeyValuePair key="myCustomField" value="myCustomValue" />
+			</JsonLayout>
+			<Policies>
+				<OnStartupTriggeringPolicy />
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="50 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20" />
+		</RollingFile>
+		<RollingFile name="SQLRollingFileAppender"
+			fileName="logs/sql.log"
+			filePattern="logs/$${date:yyyy-MM}/sql-%d{MM-dd-yyyy}-%i.log.gz">
+			<PatternLayout>
+				<Pattern>%d [%t] [%p] %c | uuid: %X{request_uuid} | %replace{%replace{%m}{password=[^,]*}{password=******}}{bindPass=[^,]*}{bindPass=******}%n"</Pattern>
+			</PatternLayout>
+			<Policies>
+				<OnStartupTriggeringPolicy />
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="50 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="50" />
+		</RollingFile>
+		<RollingFile name="ConfigTransferRollingFileAppender"
+			fileName="logs/config-transfer.log"
+			filePattern="logs/$${date:yyyy-MM}/ct-%d{MM-dd-yyyy}-%i.log.gz">
+			<PatternLayout>
+				<Pattern>%d [%t] [%p] %c | uuid: %X{request_uuid} | %replace{%replace{%m}{password=[^,]*}{password=******}}{bindPass=[^,]*}{bindPass=******}%n"</Pattern>
+			</PatternLayout>
+			<Policies>
+				<OnStartupTriggeringPolicy />
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="50 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="50" />
+		</RollingFile>
+		<!-- <JDBC name="JDBCAppender" tableName="APP_LOGS"> <DataSource jndiName="java:/DefaultDS" 
+			/> <Column name="LOG_ID" pattern="%u" /> <Column name="ENTRY_DATE" isEventTimestamp="true" 
+			/> <Column name="LOGGER" pattern="%logger" /> <Column name="LOG_LEVEL" pattern="%level" 
+			/> <Column name="MESSAGE" pattern="%m" /> <Column name="EXCEPTION" pattern="%throwable 
+			" />> </JDBC> -->
+		<Console name="Console" target="SYSTEM_OUT">
+			<!--  <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />-->
+			<PatternLayout>
+				<Pattern>%d [%t] [%p] %c{1.}  | tenant:%X{tenantName} | uuid: %X{request_uuid} | %replace{%replace{%replace{%replace{%replace{%replace{%replace{%m}{password=[^,]*}{password=******}}{wsPassword=[^,]*}{wsPassword=******}}{bindPass=[^,]*}{bindPass=******}}{unicodePwd=[^,]*}{unicodePwd=******}}{wsPwd=[^,]*}{wsPwd=******}}{generatedPassword=[^,]*}{generatedPassword=******}}{loginPassword=[^,]*}{loginPassword=******}%n"</Pattern>
+			</PatternLayout>
+		</Console>
+		<Routing name="RoutingAppender">
+			<Routes pattern="$${ctx:tenantName}">
+				<Route ref="DefaultTenantRollingFileAppender" />
+				<Route ref="Tenant2RollingFileAppender" key="test-tenant" />
+			</Routes>
+		</Routing>
+
+
+	</Appenders >
+	
+
+	<Loggers>
+		<Logger name="org.hibernate.SQL" level="INFO"
+			additivity="false">
+			<AppenderRef ref="SQLRollingFileAppender" level="INFO" />
+		</Logger>
+		<Logger name="org.hibernate.type" level="INFO"
+			additivity="false">
+			<AppenderRef ref="SQLRollingFileAppender" level="INFO" />
+		</Logger>
+		<Logger name="com.zaxxer.hikari" level="INFO"
+			additivity="false">
+			<AppenderRef ref="DefaultTenantRollingFileAppender" level="INFO" />
+			<!-- <AppenderRef ref="Console"/> -->
+		</Logger>
+		<Logger name="org.hibernate.persister.entity" level="ERROR"
+			additivity="false">
+			<AppenderRef ref="DefaultTenantRollingFileAppender" level="ERROR" />
+		</Logger>
+		<Logger name="org.hibernate.collection.internal" level="ERROR"
+			additivity="false">
+			<AppenderRef ref="DefaultTenantRollingFileAppender" level="ERROR" />
+		</Logger>
+		<Logger name="org.hibernate.cfg.AnnotationBinder" level="ERROR"
+			additivity="false">
+			<AppenderRef ref="DefaultTenantRollingFileAppender" level="ERROR" />
+		</Logger>
+		<Logger name="org.hibernate.type" level="INFO"
+			additivity="false">
+			<AppenderRef ref="DefaultTenantRollingFileAppender" level="INFO" />
+		</Logger>
+		<Logger name="com.alnt.platform.application.security.infolog"
+			level="INFO" additivity="false">
+			<AppenderRef ref="AppSecRollingFileAppender" />
+		</Logger>
+		<Logger name="com.alnt.platform.application.security.secret"
+				level="WARN" additivity="false">
+			<AppenderRef ref="DefaultTenantRollingFileAppender" />
+		</Logger>
+		<Logger name="com.alnt" level="DEBUG" additivity="false">
+			<AppenderRef ref="DefaultTenantRollingFileAppender" level="DEBUG" />
+			<!-- <AppenderRef ref="Console"/> -->
+		</Logger>
+		<Logger name="com.alnt.configtransfer" level="DEBUG"
+			additivity="false">
+			<AppenderRef ref="ConfigTransferRollingFileAppender" level="DEBUG" />
+		</Logger>
+		
+<!-- 		<Logger name="com.alnt" level="DEBUG" additivity="false"> -->
+<!-- 			<AppenderRef ref="RoutingAppender" level="DEBUG" /> -->
+<!-- 		</Logger> -->
+		
+
+		
+<!-- 		<Logger name="com.alnt" level="DEBUG" additivity="false"> -->
+<!-- 			<AppenderRef ref="RoutingAppender" level="DEBUG" /> -->
+<!-- 		</Logger> -->
+		
+
+
+		<Root level="INFO" additivity="false">
+			<AppenderRef ref="DefaultTenantRollingFileAppender" level="INFO" />
+			<!-- <AppenderRef ref="JsonRollingFileAppender" level="error" /> -->
+			<!-- <AppenderRef ref="Console"/> -->
+		</Root>
+	</Loggers>
+</Configuration>
+
